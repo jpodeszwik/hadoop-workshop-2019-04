@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+\lstset{
+	language=sql,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Hive}
+
+Hive Documentation:
+\\*
+https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML
+\\*
+\\*
+Connect with beeline:
+\begin{lstlisting}
+!connect jdbc:hive2://<host>:<port>/<base> <user> <pass>
+!connect jdbc:hive2://<hadoop4>:10000 jpodeszwik jpodeszwik
+!connect jdbc:hive2://<hadoop4>:10000/xyz jpodeszwik jpodeszwik
+\end{lstlisting}
+
+Create database:
+\begin{lstlisting}
+create database xyz;
+\end{lstlisting}
+
+Change database:
+\begin{lstlisting}
+use xyz;
+\end{lstlisting}
+
+Create table and load data:
+\begin{lstlisting}
+CREATE TABLE transfers(
+		src STRING,
+		dst STRING,
+		amount INT,
+		date STRING
+	)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ","
+	STORED AS TEXTFILE;
+
+LOAD DATA INPATH "/user/xyz/transfers" INTO TABLE transfers;
+\end{lstlisting}
+
+Create table in specific location (which might already exist):
+\begin{lstlisting}
+CREATE TABLE transfers2(
+		src STRING,
+		dst STRING,
+		amount INT,
+		date STRING
+	)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ","
+	STORED AS TEXTFILE
+	LOCATION "/user/xyz/transfers_table";
+\end{lstlisting}
+
+Create external table:
+\begin{lstlisting}
+CREATE EXTERNAL TABLE transfers3 <rest_of_create_command>;
+\end{lstlisting}
+
+Change delimiter:
+\begin{lstlisting}
+create table transfers4
+row format delimited
+fields terminated by ";"
+as select * from transfers;
+\end{lstlisting}
+
+Change data format:
+\begin{lstlisting}
+create table transfers5
+stored as orc
+as select * from transfers;
+\end{lstlisting}
+
+Enable compression:
+\begin{lstlisting}
+set hive.exec.compress.output=true;
+set mapreduce.output.fileoutputformat.compress=true;
+set mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec;
+set mapreduce.output.fileoutputformat.compress.type=BLOCK;
+\end{lstlisting}
+
+Enable dynamic partitioning:
+\begin{lstlisting}
+SET hive.exec.dynamic.partition=true;
+\end{lstlisting}
+
+\pagebreak
+
+Refresh data about partitions:
+\begin{lstlisting}
+MSCK REPAIR TABLE <tabela>;
+\end{lstlisting}
+
+\begin{lstlisting}
+CREATE TABLE transfers5(
+		src STRING,
+		dst STRING,
+		amount INT,
+		date STRING
+	)
+	partitioned by (log_time string)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ","
+	STORED AS TEXTFILE
+	LOCATION "/user/xyz/events";
+\end{lstlisting}
+
+Print information about table:
+\begin{lstlisting}
+show create table transfers;
+\end{lstlisting}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item Create database <login> and use it in next tasks.
+\item Create table transfers. Load transfer data into this table.
+\item Create ‘external’ table and load the same data into it.
+\item Drop both tables and see what happens to data on hdfs.
+\item Create table in ORC format. Check if the data is binary.
+\item Sum field 'amount' by source field.
+\item Create table 'owners' from data loaded with sqoop.
+\item Create table 'named\_transfers' by joining 'owners' and 'transfers'. Replace src and dst fields with names.
+\item Create table partitiones by source account id.
+\end{enumerate}
+
+\end{document}
