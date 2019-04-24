@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Sqoop}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item import table test.account\_owners from database on hadoop-db:
+\begin{lstlisting}
+sqoop import --connect <connect_string> --username <username> --password <password> \
+  --table <table> -m <mappers_count> --target-dir <target_dir>
+sqoop import --connect jdbc:mysql://hadoop-db:3306/test --username test --password test_password \
+  --table account_owners -m 1 --target-dir /user/<username>/account_owners
+\end{lstlisting}
+\item Create mysql table 'test.<username>\_transfers':
+\item password: test\_password
+\begin{lstlisting}
+mysql -u test -p --host hadoop-db test
+CREATE TABLE <username>_transfers (src varchar(255) DEFAULT NULL, dst varchar(255) DEFAULT NULL, \
+  amount varchar(255) DEFAULT NULL, execution_date varchar(255));
+\end{lstlisting}
+\item Export transfers to mysql table:
+\begin{lstlisting}
+sqoop export --connect <connect_string> --username <username> --password <password> \
+  --table <table> -m <mappers_count> --export-dir <export_dir>
+sqoop export --connect jdbc:mysql://hadoop-db:3306/test --username test --password test_password \
+  --table <username>_transfers -m 1 --export-dir /user/<username>/transfers
+\end{lstlisting}
+\end{enumerate}
+
+\end{document}
