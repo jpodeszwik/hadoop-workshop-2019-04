@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Hadoop streaming}
+
+Run hadoop streaming job:
+\begin{enumerate}
+\item copy scripts mapper.py and reducer.py to hadoop node
+\item log into that haddop node
+\item run job:
+\begin{lstlisting}[]
+hadoop jar <path_to_hadoop_streaming_jar> -files <list_of_files_with_mapper_and_reducer> \
+  -mapper <file_with_mapper> -reducer <file_with_reducer> -input <input_dir> -output <output_dir>
+
+hadoop jar /opt/mapr/hadoop/hadoop-2.7.0/share/hadoop/tools/lib/hadoop-streaming-2.7.0-mapr-1808.jar -files mapper.py,reducer.py \
+  -mapper mapper.py -reducer reducer.py -input /user/<username>/loremipsum -output /user/<username>/outputs/output
+\end{lstlisting}
+
+Attention: output\_dir must not exist!
+\end{enumerate}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item count letters in loremipsum
+\item sort counted letters by occurrences. Why is it harder than with java api?
+\item Count how many incoming transfers were there for each account.
+\item find number of unique accounts
+
+\subsection*{Extra task}
+\item Write mapper and reducer in other technology than python and java, and use it in hadoop-streaming job.
+\end{enumerate}
+
+\subsection*{Useful parameters}
+
+Enable compression:
+\begin{lstlisting}
+-D mapreduce.output.fileoutputformat.compress=true \
+  -D mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec
+\end{lstlisting} 
+Use different input format:
+\begin{lstlisting}
+-inputformat org.apache.hadoop.mapred.SequenceFileInputFormat
+\end{lstlisting}
+Użycie different output:
+\begin{lstlisting}
+-outputformat org.apache.hadoop.mapred.SequenceFileOutputFormat
+\end{lstlisting}
+Identity mapper:
+\begin{lstlisting}
+-mapper org.apache.hadoop.mapred.lib.IdentityMapper
+-mapper /bin/cat
+\end{lstlisting}
+
+Documentation:
+\\*
+\url{https://hadoop.apache.org/docs/r1.2.1/streaming.html}
+
+\end{document}
