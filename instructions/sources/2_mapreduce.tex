@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Mapreduce}
+
+Run mapreduce job:
+\begin{enumerate}
+\item Build jar and copy it on hadoop machine
+\item Login on hadoop machine
+\item Run jar:
+\begin{lstlisting}
+hadoop jar <path_to_jar> <package.Class> <arguments>
+hadoop jar mapreduce-jobs-1.0-SNAPSHOT.jar pl.isa.hadoop.WordCount /user/xyz/loremipsum /user/xyz/outputs/output-1
+\end{lstlisting}
+
+Attention: Job will not execute if <output-dir> exists!
+\end{enumerate}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item count letters in loremipsum
+\item sort counted letters by occurrence (you will need another job for that)
+\item count how many transfers there were from each account (in 'transfers' file)
+\item join summed tranfers with client name from file 'clients'. You can use MultipleInputs (reduce side join), or DistributedCache (map side join).
+\end{enumerate}
+
+\subsection*{Extra tasks}
+
+\begin{enumerate}
+\item sort transfers by amount using many reducers (you will have many result files). Write partitioner which will assign transfer to specific reducer. You can assume that amount is a number in range <1, 1000000>
+\item build inverted index from multiple files (word -> list of files containing this word). You can fetch name of the file using:
+\begin{lstlisting}
+((FileSplit) context.getInputSplit()).getPath().getName();
+\end{lstlisting}
+\end{enumerate}
+
+\end{document}
