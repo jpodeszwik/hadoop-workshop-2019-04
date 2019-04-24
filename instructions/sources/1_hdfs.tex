@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+
+\begin{document}
+\section*{MaprFS}
+
+Useful Hadoop FS commands:
+\begin{enumerate}
+\item ls - list contents of a directory
+\begin{lstlisting}
+hadoop fs -ls <path>
+hadoop fs -ls /user/xyz
+\end{lstlisting}
+
+\item cat - print contents of a file
+\begin{lstlisting}
+hadoop fs -cat <path>
+hadoop fs -cat /user/xyz/file.txt
+\end{lstlisting}
+
+\item mkdir - creates a directory
+\begin{lstlisting}
+hadoop fs -mkdir <path>
+hadoop fs -mkdir /user/xyz/subdir
+\end{lstlisting}
+ 
+\item rm - remove a file
+\begin{lstlisting}
+hadoop fs -rm <path>
+hadoop fs -rm /user/xyz/file.txt
+\end{lstlisting}
+
+\item chmod - changes permissions of a file
+\begin{lstlisting}
+hadoop fs -chmod <mode> <path>
+hadoop fs -chmod 640 /user/xyz/file.txt
+hadoop fs -chmod o+r /user/xyz/file.txt
+\end{lstlisting}
+
+\item chown - change owner of a file
+\begin{lstlisting}
+hadoop fs -chown <owner>:<group> <path>
+hadoop fs -chown xyz:xyz /user/xyz/file.txt
+\end{lstlisting}
+
+\item cp - copy a file
+\begin{lstlisting}
+hadoop fs -cp <source> <target>
+hadoop fs -cp /user/xyz/file /user/xyz/file.copy
+\end{lstlisting}
+
+\item mv - move a file
+\begin{lstlisting}
+hadoop fs -mv <source> <target>
+hadoop fs -mv /user/xyz/file /user/xyz/file.new
+\end{lstlisting}
+
+\item put - copy a file from local path into HDFS
+\begin{lstlisting}
+hadoop fs -put <local_path> <hdfs_path>
+hadoop fs -put file.txt /user/xyz
+\end{lstlisting}
+
+\pagebreak
+
+\item get - copy a file from HDFS to local path
+\begin{lstlisting}
+hadoop fs -get <hdfs_path> <local_path>
+hadoop fs -get /user/xyz/file.txt .
+\end{lstlisting}
+
+\item touchz - create an empty file
+\begin{lstlisting}
+hadoop fs -touchz <path>
+hadoop fs -touchz /usr/xyz/file.txt
+\end{lstlisting}
+
+\item appendToFile - append local file contents to file on hdfs
+\begin{lstlisting}
+hadoop fs -appendToFile <local_path> <hdfs_path>
+hadoop fs -appendToFile abc.txt /user/xyz/file.txt
+\end{lstlisting}
+
+\end{enumerate}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item Create files on distributed storage with permissions:\\*
+
+\begin{tabular}{c | c | c | c}
+	path & user & group & permissions \\ \hline 
+	/user/<username>/inputs & <login> & <login> & 755 \\
+	/user/<username>/outputs & <login> & <login> & 755 \\
+	/user/<username>/alien & <login> & <login> & 755 \\
+\end{tabular}
+
+\item put files 'loremipsum' and 'transfers' to /user/<username>/inputs
+\item put file with any content into your directory, and ask a colleague to read it
+\item change permissions of the file so that nobody can read it, and ask a colleague to read it again
+\end{enumerate}
+
+\end{document}
