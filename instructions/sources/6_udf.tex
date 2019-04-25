@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+\lstset{
+	language=sql,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Hive UDF}
+
+\begin{tabular}{c | c }
+	UDF & take values from single row and return value or struct \\
+	UDAF & aggregate values from many rows and return value or struct \\
+	UDTF & take values from single row and return zero or more rows \\
+\end{tabular}
+
+\bigskip
+
+
+Run udf:
+\begin{lstlisting}
+add jar maprfs:///user/xyz/hive-udfs-1.0-SNAPSHOT.jar;
+create temporary function hello AS "pl.isa.hadoop.HelloWorldUdf";
+select hello(src) from transfers limit 10;
+\end{lstlisting}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item write udf, that will convert PLN from field amount to EUR (exchange rate 4.29)
+\item write udf, that will convert field amount into struct (pln: amount, usd: amount/3.85, eur: amount/4.29)
+\item write udf, that will concat any number of columns
+\item write udaf, that will generate table with account operations (charges, credits). Example: 
+\\*
+\begin{tabular}{c | c | c }
+	src & dst & amount \\ \hline 
+	a & b & 5 \\
+	a & c & 10 \\
+	b & d & 15 \\
+\end{tabular}
+->
+\begin{tabular}{c | c}
+	account & amount \\ \hline 
+	a & -5 \\
+	a & -10 \\
+	b & 5 \\
+	b & -15 \\
+	c & 10 \\
+	d & 15 \\
+\end{tabular}
+\end{enumerate}
+
+
+\end{document}
