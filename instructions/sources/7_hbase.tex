@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\pagenumbering{gobble}
+\lstset{
+	language=sql,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Hbase}
+
+Run hive client:
+\begin{lstlisting}
+export HBASE_CP=`/opt/mapr/hbase/hbase-1.1.8/bin/hbase classpath`
+java -cp \$HBASE_CP:hbase-1.0-SNAPSHOT.jar <class> <other_params>
+java -cp \$HBASE_CP:hbase-1.0-SNAPSHOT.jar pl.isa.hadoop.CreateTable /user/xyz/table
+\end{lstlisting}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item write code that will put transfers into hbase
+\item how can we optimize querying transfers by amount for performance
+\end{enumerate}
+
+\end{document}
