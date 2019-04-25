@@ -17,17 +17,6 @@
 \begin{document}
 \section*{Spark SQL}
 
-Run spark (scala):
-\begin{lstlisting}[]
-/opt/mapr/spark/spark-2.3.2/bin/spark-shell --master local
-/opt/mapr/spark/spark-2.3.2/bin/spark-shell --master yarn --deploy-mode client
-\end{lstlisting}
-
-python:
-\begin{lstlisting}[]
-/opt/mapr/spark/spark-2.3.2/bin/pyspark --master local
-\end{lstlisting}
-
 Load data from hive:
 \begin{lstlisting}[]
 val df = sql("SELECT * from transfers");
@@ -48,6 +37,11 @@ val df = spark.read.format("csv").load("/path/to/csv").toDF("src", "dst", "amoun
 Load data from binary format:
 \begin{lstlisting}[]
 val df = spark.read.format("orc").load("/path/to/orc/table")
+\end{lstlisting}
+
+Load data from mysql:
+\begin{lstlisting}[]
+val df = spark.read.format("jdbc").option("url", "jdbc:mysql://hadoop-db:3306/test").option("driver", "com.mysql.jdbc.Driver").option("user", "test").option("password", "test_password").option("dbtable", "account_owners")
 \end{lstlisting}
 
 Filtering the data:
@@ -80,19 +74,17 @@ df.write.csv("/user/xyz/dir")
 df.write.orc("/user/xyz/dir")
 \end{lstlisting}
 
-Word count:
+Perform join:
 \begin{lstlisting}[]
-sc.textFile("/user/xyz/loremipsum").flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey((a, b) => a + b).toDF("word", "count").show()
-sc.textFile("/user/xyz/loremipsum").flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey((a, b) => a + b).collect()
+df1.as("df1").join(df2.as("df2"), col("df1.col_name") === col("df2.col_name"), "inner")
 \end{lstlisting}
-
 
 \subsection*{Tasks}
 
 \begin{enumerate}
-\item count letters in loremipsum
+\item perform a word count and save is as table to hive.
 \item Count how many incoming transfers were there for each account.
-\item find number of unique accounts
+\item Join transfers with owners. And save a file containing name instead of src and dst.
 \end{enumerate}
 
 \end{document}
