@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Spark Streaming}
+
+Start spark streaming context:
+\begin{lstlisting}[]
+import org.apache.spark.streaming.{Seconds, StreamingContext}
+val ssc = new StreamingContext(sc, Seconds(10))
+\end{lstlisting}
+
+Listen to port:
+\begin{lstlisting}[]
+val ds = ssc.socketTextStream("localhost", 9999)
+\end{lstlisting}
+
+Listen to dfs changes:
+\begin{lstlisting}[]
+val ds = ssc.textFileStream("/user/xyz/streaming-input")
+\end{lstlisting}
+
+
+Save to file:
+\begin{lstlisting}[]
+ds.saveAsTextFiles("/user/xyz/streaming-output")
+\end{lstlisting}
+
+print:
+\begin{lstlisting}[]
+ds.print()
+\end{lstlisting}
+
+sliding window:
+\begin{lstlisting}[]
+ds.reduceByKeyAndWindow((a: Int, b: Int) => (a + b), Seconds(30), Seconds(10))
+\end{lstlisting}
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item Count how many incoming transfers were there for each account in 10 seconds windows.
+\end{enumerate}
+
+\end{document}
