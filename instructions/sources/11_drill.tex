@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Drill}
+
+Connect:
+\begin{lstlisting}[]
+/opt/mapr/drill/drill-1.15.0/bin/drill-localhost -n username
+\end{lstlisting}
+
+Select data from hive:
+\begin{lstlisting}[]
+select * from hive.`transfers` where amount < 5000 limit 10;
+\end{lstlisting}
+
+Select data from mysql:
+\begin{lstlisting}[]
+select * from mysql.test.`account_owners` limit 10;
+\end{lstlisting}
+
+Select data from hbase table:
+\begin{lstlisting}[]
+select row_key, CONVERT_FROM(cf1['name'], 'UTF8') from dfs.`/user/xyz/hbase-table` limit 10;
+\end{lstlisting}
+
+Select data from csv file (must have an extension):
+\begin{lstlisting}[]
+select columns[3] from dfs.root.`/user/xyz/transfers.csv` limit 10;
+\end{lstlisting}
+
+Select data from parquet file (no extension necessary, can read columns):
+\begin{lstlisting}[]
+select * from dfs.root.`/user/xyz/parquet_file` limit 10;
+\end{lstlisting}
+
+\end{document}
