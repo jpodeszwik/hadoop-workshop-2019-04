@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Setup}
+
+1. Download / copy to desktop (ip will be visible on a whiteboard, or usb storage will be passed)
+\begin{enumerate}
+\item openjdk-12.0.1\_windows-x64\_bin.zip
+\item user\_rsa
+\item .m2.zip
+\item Firefox-Installer.exe
+\end{enumerate}
+
+2. Setup socks proxy
+\begin{enumerate}
+\item run git bash
+\item run 'ssh -i 'C:\\Users\\username\\id\_rsa' -D 5431 -C -N ip.address
+\end{enumerate}
+
+3. Setup Firefox
+\begin{enumerate}
+\item install firefox from Firefox-Installer.exe
+\item configure socks proxy for 127.0.0.1 port 5432
+\item check "Proxy dns when using socks v5"
+\item open http://hadoop1:8088 and check if you see anything
+\end{enumerate}
+
+4. Java projects
+\begin{enumerate}
+\item run intellij idea. If it asks for usernam / password for license click "evaluate for 30 days"
+\item open in intellij every java project from code directory of this repo
+\item execute maven package for every project (on the right side there should be maven options)
+\end{enumerate}
+
+\end{document}
