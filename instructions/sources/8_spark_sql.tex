@@ -1,0 +1,93 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\pagenumbering{gobble}
+\lstset{
+	language=bash,
+	frame=single,
+	basicstyle=\tiny,
+	literate=*{-}{-}1,
+	columns=fullflexible
+	}
+	
+\begin{document}
+\section*{Spark SQL}
+
+Run spark :
+\begin{lstlisting}[]
+/opt/mapr/spark/spark-2.3.2/bin/spark-shell --master local
+/opt/mapr/spark/spark-2.3.2/bin/spark-shell --master yarn --deploy-mode client
+\end{lstlisting}
+
+Load data from hive:
+\begin{lstlisting}[]
+val df = sql("SELECT * from transfers");
+\end{lstlisting}
+
+Load data from csv:
+\begin{lstlisting}[]
+import org.apache.spark.sql.types._
+
+val schema = StructType(Array(StructField("src", StringType, true), StructField("dst", StringType, true), StructField("amount", IntegerType, true), StructField("date", StringType, true)))
+
+val df = spark.read.format("csv").schema(schema).load("/path/to/csv")
+
+// or
+val df = spark.read.format("csv").load("/path/to/csv").toDF("src", "dst", "amount", "date")
+\end{lstlisting}
+
+Load data from binary format:
+\begin{lstlisting}[]
+val df = spark.read.format("orc").load("/path/to/orc/table")
+\end{lstlisting}
+
+Filtering the data:
+\begin{lstlisting}[]
+df.where("amount < 5000")
+df.filter(\$"amount" < 5000)
+df.filter(col("amount") < 5000)
+df.filter(r => r.getInt(2) < 5000)
+\end{lstlisting}
+
+Mapping the data:
+\begin{lstlisting}[]
+df.map(row => (row.getInt(2) * 2, row.getString(0))).toDF("amount times 2", "src")
+\end{lstlisting}
+
+Sorting:
+\begin{lstlisting}[]
+df.orderBy(\$"count".desc)
+\end{lstlisting}
+
+Save data to hive:
+\begin{lstlisting}[]
+df.createOrReplaceTempView("tempDfView")
+sql("create table table_name as select * from tempDfView");
+\end{lstlisting}
+
+Save data to file:
+\begin{lstlisting}[]
+df.write.csv("/user/xyz/dir")
+df.write.orc("/user/xyz/dir")
+\end{lstlisting}
+
+Word count:
+\begin{lstlisting}[]
+sc.textFile("/user/xyz/loremipsum").flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey((a, b) => a + b).toDF("word", "count").show()
+sc.textFile("/user/xyz/loremipsum").flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey((a, b) => a + b).collect()
+\end{lstlisting}
+
+
+\subsection*{Tasks}
+
+\begin{enumerate}
+\item count letters in loremipsum
+\item Count how many incoming transfers were there for each account.
+\item find number of unique accounts
+\end{enumerate}
+
+\end{document}
