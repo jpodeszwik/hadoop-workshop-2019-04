@@ -14,15 +14,22 @@ public class WordCount {
 
     public static class WcMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
         @Override
-        protected void map(LongWritable key, Text value, Context context) {
-
+        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            for (String word : value.toString().split(" ")) {
+                context.write(new Text(word), new LongWritable(1));
+            }
         }
     }
 
     public static class WcReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
         @Override
-        protected void reduce(Text key, Iterable<LongWritable> values, Context context) {
+        protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+            long count = 0;
+            for (LongWritable value : values) {
+                count += value.get();
+            }
 
+            context.write(key, new LongWritable(count));
         }
     }
 
@@ -42,7 +49,7 @@ public class WordCount {
         job.setOutputValueClass(LongWritable.class);
 
         job.setJobName("word-count");
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(2);
 
         FileInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(output));
